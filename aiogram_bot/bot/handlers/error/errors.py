@@ -29,8 +29,10 @@ async def error_handler(event: ErrorEvent):
     else:
         logger.exception(exception)
     for admin in Settings().admins.split(','):
-
-        await bot.send_message(admin, text, parse_mode=None)
+        try:
+            await bot.send_message(admin, text, parse_mode=None)
+        except:
+            pass
     text = "error"
 
     if str(event.exception) == "429":

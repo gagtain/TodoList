@@ -42,8 +42,6 @@ services:
       "sh", "-c", "python main.py"
     ]
     env_file: aiogram_bot/bot/.env
-    ports:
-      - 8000:8000
     networks:
       - forwebapi
 
@@ -74,13 +72,25 @@ services:
       dockerfile: Dockerfile_celery
     container_name: worker
     entrypoint: celery
-    command: -A celery_app.app worker --loglevel=debug --beat
+    command: -A celery_app.app worker --loglevel=debug
     env_file: django_api/api/api/.env
     depends_on:
       - webapi
     networks:
       - forwebapi
 
+  beat:
+    build:
+      context: django_api
+      dockerfile: Dockerfile_celery
+    container_name: beat
+    entrypoint: celery
+    command: -A celery_app.app beat --loglevel=debug
+    env_file: django_api/api/api/.env
+    depends_on:
+      - webapi
+    networks:
+      - forwebapi
 
 networks:
   forwebapi:

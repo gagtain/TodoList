@@ -25,7 +25,7 @@ task_name_window = Window(
 )
 
 task_description_window = Window(
-    Const("Напишите ошисание задачи"),
+    Const("Напишите описание задачи"),
     MessageInput(on_input_desk),
     Back(),
     state=TaskState.descriptions,
@@ -41,7 +41,7 @@ task_tags_window = Window(
 )
 
 task_dead_line_window = Window(
-    Const("Напишите дедлайн задачи в формате '%Y-%m-%d:%H:%M'"),
+    Const("Напишите дедлайн задачи в формате '%Y-%m-%d:%H:%M', пример: 2024-02-01:11:11"),
     Back(),
     MessageInput(on_input_dead_line_time),
     state=TaskState.dead_line_time,

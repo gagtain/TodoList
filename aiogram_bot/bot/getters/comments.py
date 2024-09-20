@@ -1,15 +1,19 @@
 from aiogram_dialog import DialogManager
 
 from api.comment_api import comment_api
+from api.task_api import task_api
 from utils.universal_model import Object
 
 
 async def get_comments(dialog_manager: DialogManager, **middleware_data):
-    task_list = await comment_api.get_task_comments(dialog_manager.dialog_data['task_id'])
+
+    task_list = await task_api.get_task_list(middleware_data['event_from_user'].id)
+
+    comment_list = await comment_api.get_task_comments(task_list[int(dialog_manager.dialog_data['task_id'])]['id'])
     data = {
         "comments": [
-            (f"{task['username']}", task['id'])
-            for task in task_list
+            (f"{comment['username']}", comment['id'])
+            for comment in comment_list
         ]
     }
     return data
