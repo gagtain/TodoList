@@ -6,7 +6,7 @@ from aiogram import Bot
 from celery import shared_task
 from django.utils import timezone
 
-from aiogram_bot.bot.main import settings
+from django.conf import settings
 from todolist.models import Task
 
 
