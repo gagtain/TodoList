@@ -7,6 +7,12 @@ services:
       - POSTGRES_DB=todolist
       - POSTGRES_USER=todolist_user
       - POSTGRES_PASSWORD=todolist_pass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U todolist_user -d todolist"]
+      interval: 10s
+      timeout: 5s
+      retries: 80
+      start_period: 10s
     networks:
       - forwebapi
 
@@ -62,7 +68,8 @@ services:
     networks:
       - forwebapi
     depends_on:
-      - database
+        database:
+          condition: service_healthy
       - redis
 
 
