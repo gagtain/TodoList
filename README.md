@@ -84,7 +84,7 @@ http://localhost:8080/ - fast_api
 Чтобы создать суперпользователя для входа в /admin, необходимо:
 
 1. Написать команду 
-```docker compose exec -it python manage.py createsuperuser```
+```docker compose exec -it webapi python manage.py createsuperuser```
 2. Указать нужные креды
 
 
