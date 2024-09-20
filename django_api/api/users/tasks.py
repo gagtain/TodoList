@@ -1,5 +1,4 @@
 import asyncio
-from asyncio import TaskGroup
 from typing import Coroutine, Sequence
 
 from aiogram import Bot
@@ -14,7 +13,7 @@ from todolist.models import Task
 def send_notify_users():
     task_async_list = []
 
-    for task_db_list in divide_chunks(Task.objects.filter(dead_line_time__lte=timezone.now()), 100):
+    for task_db_list in divide_chunks(Task.objects.filter(dead_line_time__lte=timezone.now(), is_notify=False), 100):
         for task_db in task_db_list:
             task_async_list.append(
                 send_notify(task_db)
@@ -24,6 +23,7 @@ def send_notify_users():
 
 
 async def generate_tasks(func: list[Coroutine]):
+    from asyncio import TaskGroup
     async with TaskGroup() as th:
         for i in func:
             th.create_task(
@@ -33,10 +33,9 @@ async def generate_tasks(func: list[Coroutine]):
 
 async def send_notify(task: Task):
     bot = Bot(token=settings.BOT_TG_TOKEN)
-    try:
-        await bot.send_message(task.telegram_id, "Дедлайн задачи {} наступил".format(task.name))
-    except:
-        pass
+    await bot.send_message(task.telegram_id, "Дедлайн задачи {} наступил".format(task.name))
+    task.is_notify = True
+
 
 def divide_chunks(items: Sequence, n: int):
 

@@ -4,13 +4,10 @@ from rest_framework.authtoken.models import Token
 
 from users.models import TodoUser
 
-
 class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-
-
 
         TodoUser.objects.filter(username='bot').delete()
 
