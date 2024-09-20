@@ -1,0 +1,90 @@
+version: '3.9'
+
+services:
+  database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=todolist
+      - POSTGRES_USER=todolist_user
+      - POSTGRES_PASSWORD=todolist_pass
+    networks:
+      - forwebapi
+
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - forwebapi
+
+
+  webapi_fast:
+    build:
+      context: fast_api/
+    container_name: webapi_fast
+    command: [
+      "sh", "-c", "python create_model.py && python main.py"
+    ]
+    env_file: fast_api/api/.env
+    ports:
+      - 8080:8000
+    depends_on:
+      - webapi
+    networks:
+      - forwebapi
+
+
+  bot:
+    build:
+      context: aiogram_bot/
+    container_name: bot
+    command: [
+      "sh", "-c", "python main.py"
+    ]
+    env_file: aiogram_bot/bot/.env
+    ports:
+      - 8000:8000
+    networks:
+      - forwebapi
+
+
+  webapi:
+    build:
+      context: django_api/
+    container_name: webapi
+    command: [
+      "sh", "-c", "python manage.py makemigrations &&
+     python manage.py migrate &&
+     python manage.py create_bot_user &&
+     python manage.py runserver 0.0.0.0:8000"
+    ]
+    env_file: django_api/api/api/.env
+    ports:
+      - 8000:8000
+    networks:
+      - forwebapi
+    depends_on:
+      - database
+      - redis
+
+
+  worker:
+    build:
+      context: django_api
+      dockerfile: Dockerfile_celery
+    container_name: worker
+    entrypoint: celery
+    command: -A celery_app.app worker --loglevel=debug --beat
+    env_file: django_api/api/api/.env
+    depends_on:
+      - webapi
+    networks:
+      - forwebapi
+
+
+networks:
+  forwebapi:
+    name: forwebapi
+    driver: bridge

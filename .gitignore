@@ -1,0 +1,8 @@
+fast_api/api/.env
+fast_api/.venv/
+django_api/.venv/
+django_api/api/api/.env
+aiogram_bot/.venv/
+aiogram_bot/bot/.env
+venv/
+.venv/
