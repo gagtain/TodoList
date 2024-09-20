@@ -79,8 +79,7 @@ services:
       context: django_api
       dockerfile: Dockerfile_celery
     container_name: worker
-    entrypoint: celery
-    command: -A api worker --loglevel=debug
+    command: python -m celery -A api worker --loglevel=debug
     env_file: django_api/api/api/.env
     depends_on:
       - webapi
