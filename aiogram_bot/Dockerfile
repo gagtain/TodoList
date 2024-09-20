@@ -1,6 +1,6 @@
 FROM --platform=linux/amd64 python:3.10.6
 
-COPY api/requirements.txt /temp/requirements.txt
+COPY bot/requirements.txt /temp/requirements.txt
 WORKDIR /APP
 
 COPY bot/* /APP
